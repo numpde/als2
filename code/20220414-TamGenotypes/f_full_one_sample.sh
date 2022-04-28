@@ -16,4 +16,5 @@ echo "${sample}" &&
   bash d_1_download_sample.sh "${sample}" &&
   bash d_2_preprocess_sample.sh "${sample}" &&
   bash d_3_kallisto_map_sample.sh "${sample}" &&
-  bash d_4_bcftools.sh "${sample}"
+  bash d_4_bcftools.sh "${sample}" &&
+  bash d_5_snpEff.sh "${sample}"
