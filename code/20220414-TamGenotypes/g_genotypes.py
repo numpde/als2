@@ -1,4 +1,6 @@
 import re
+
+from collections import OrderedDict
 from pathlib import Path
 
 import pandas as pd
@@ -7,20 +9,27 @@ import numpy as np
 from pysam import VariantFile
 from pysam.libcbcf import VariantMetadata
 
-from plox import Plox
-from tcga.utils import mkdir
+from plox import Plox, rcParam
+
+from tcga.utils import mkdir, first
 
 out_dir = mkdir(Path(__file__).parent / f"output/{Path(__file__).stem}/tmp")
 
-vcf_files = sorted(Path(__file__).parent.glob("output/*_bcftools/*/*.mpileup.vcf"))
+vcf_files = OrderedDict((
+    (re.search(r"SRR[0-9]+", str(vcf_file)).group(), vcf_file)
+    for vcf_file in sorted(Path(__file__).parent.glob("output/*_bcftools/*/*.mpileup.vcf"))
+))
 
-for vcf_file in vcf_files:
-    sample = re.search(r"SRR[0-9]+", str(vcf_file)).group()
-    print(sample)
+df_meta: pd.DataFrame
+df_meta = pd.read_table(first(f for p in Path('.').resolve().parents for f in p.glob('**/*Tam-2019/meta_merged.tsv')))
+df_meta = df_meta.set_index('run_accession').loc[list(vcf_files)]
 
-    vcf_file = set(f for f in vcf_files if (sample in str(f))).pop()
+from_field = 'QS'  # 'AD' or 'QS'
 
-    from_field = 'QS'  # 'AD' or 'QS'
+df_meta[f"hist_{from_field}"] = None
+
+for (sample, vcf_file) in vcf_files.items():
+    print(sample, vcf_file)
 
     try:
         df = pd.DataFrame(
@@ -58,15 +67,21 @@ for vcf_file in vcf_files:
     freq2 = df[genotypes].apply(lambda s: min(s.nlargest(2)) / sum(s), axis=1)
     ref = df[genotypes].apply(lambda s: s[df.ref[s.name]] / sum(s), axis=1)
 
-    with Plox() as px:
+    style = {
+        rcParam.Hatch.linewidth: 1,
+        rcParam.Figure.figsize: (8, 3),
+    }
+
+    with Plox(style) as px:
         a1 = px.a
 
         bins = np.linspace(0, 1, 77)
 
-        a1.hist(freq1, bins=bins, color='C1', alpha=0.8, label="1st")
-        a1.hist(freq2, bins=bins, color='C2', alpha=0.8, label="2nd")
-        a1.hist(ref, bins=bins, color='C0', alpha=0.6, label="ref")
+        a1.hist(freq1, hatch='//', bins=bins, color='C1', alpha=0.6, label="1st", edgecolor='C1')
+        a1.hist(freq2, hatch='//', bins=bins, color='C2', alpha=0.6, label="2nd", edgecolor='C2')
+        a1.hist(ref, hatch='\\\\', bins=bins, color='C0', alpha=0.6, label="ref", edgecolor='C0')
 
+        a1.grid(True, zorder=-100, linewidth=0.5, alpha=0.6)
         a1.legend(loc="upper center")
 
         for a in [a1, ]:
@@ -78,4 +93,10 @@ for vcf_file in vcf_files:
 
             a.set_ylim(0.5, 20_000)
 
-        px.f.savefig(mkdir(out_dir / f"hist_{from_field}") / f"{sample}.png")
+        filename = mkdir(out_dir / f"hist_{from_field}") / f"{sample}.png"
+        px.f.savefig(filename)
+
+        df_meta.loc[sample, f"hist_{from_field}"] = f"<img height='200px' src='{filename}' />"
+
+df_meta.to_csv(out_dir / "meta.tsv", sep='\t')
+df_meta.to_html(out_dir / "meta.html", escape=False, border=1, sparsify=True)
