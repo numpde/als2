@@ -4,7 +4,7 @@ set -e
 
 #
 
-sample="${1:-SRR8375274}"
+sample="${1:-SRR8375426}"
 
 #
 
