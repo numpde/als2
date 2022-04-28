@@ -4,6 +4,8 @@ from collections import OrderedDict
 from os.path import relpath
 from pathlib import Path
 
+import urllib.parse
+
 import pandas as pd
 import numpy as np
 
@@ -12,7 +14,7 @@ from pysam.libcbcf import VariantMetadata
 
 from plox import Plox, rcParam
 
-from tcga.utils import mkdir, first
+from tcga.utils import mkdir, first, unlist1
 
 out_dir = mkdir(Path(__file__).parent / f"output/{Path(__file__).stem}")
 
@@ -98,7 +100,33 @@ for (sample, vcf_file) in vcf_files.items():
         px.f.savefig(filename)
 
         rel_filename = relpath(path=str(filename), start=str(out_dir))
-        df_meta.loc[sample, f"hist_{from_field}"] = f"<img height='200px' src='{filename}' />"
+        df_meta.loc[sample, f"hist_{from_field}"] = f"<img height='200px' src='{rel_filename}' />"
 
+
+def process_link(url):
+    if not isinstance(url, str):
+        return url
+
+    if re.match("ftp(.*);ftp(.*)", url):
+        (a, b) = url.split(sep=';')
+        return process_link(a) + "; " + process_link(b)
+
+    if url.startswith("ftp."):
+        return process_link(f"ftp://{url}")
+
+    result = urllib.parse.urlparse(url)
+
+    if result.scheme:
+        if text := re.search(r"[/=]([^/=]+)$", url):
+            text = unlist1(text.groups())
+            return f"<a href='{url}'>{text}</a>"
+
+    return url
+
+
+# Text dump
 df_meta.to_csv(out_dir / "meta.tsv", sep='\t')
+
+# HTML dump
+df_meta = df_meta.applymap(process_link)
 df_meta.to_html(out_dir / "meta.html", escape=False, border=1, sparsify=True)
