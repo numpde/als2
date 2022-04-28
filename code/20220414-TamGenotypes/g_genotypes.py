@@ -1,6 +1,7 @@
 import re
 
 from collections import OrderedDict
+from os.path import relpath
 from pathlib import Path
 
 import pandas as pd
@@ -13,7 +14,7 @@ from plox import Plox, rcParam
 
 from tcga.utils import mkdir, first
 
-out_dir = mkdir(Path(__file__).parent / f"output/{Path(__file__).stem}/tmp")
+out_dir = mkdir(Path(__file__).parent / f"output/{Path(__file__).stem}")
 
 vcf_files = OrderedDict((
     (re.search(r"SRR[0-9]+", str(vcf_file)).group(), vcf_file)
@@ -96,6 +97,7 @@ for (sample, vcf_file) in vcf_files.items():
         filename = mkdir(out_dir / f"hist_{from_field}") / f"{sample}.png"
         px.f.savefig(filename)
 
+        rel_filename = relpath(path=str(filename), start=str(out_dir))
         df_meta.loc[sample, f"hist_{from_field}"] = f"<img height='200px' src='{filename}' />"
 
 df_meta.to_csv(out_dir / "meta.tsv", sep='\t')
