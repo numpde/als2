@@ -1,0 +1,7 @@
+**/samples_preprocessed/*/*
+!**/samples_preprocessed/*/source.txt
+
+**/d_3_kallisto_map_sample/*/*.bam
+**/d_3_kallisto_map_sample/*/*.bam.bai
+
+

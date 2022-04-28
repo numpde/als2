@@ -1,0 +1,13 @@
+{
+	"n_targets": 13,
+	"n_bootstraps": 0,
+	"n_processed": 8809488,
+	"n_pseudoaligned": 929520,
+	"n_unique": 929507,
+	"p_pseudoaligned": 10.6,
+	"p_unique": 10.6,
+	"kallisto_version": "0.48.0",
+	"index_version": 10,
+	"start_time": "Wed Apr 27 15:05:00 2022",
+	"call": "/bio/tools/kallisto/src/build/src/kallisto quant --index=output/b/transcripts_cdna.fa.kallisto.idx --output-dir output/d_3_kallisto_map_sample/SRR8375398 --genomebam --gtf=/bio/ref/gtf/Homo_sapiens.GRCh38.105.gtf.gz --threads=7 /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375398/SRR8375398_1_val_1.fq.gz /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375398/SRR8375398_sub_1_val_1.fq.gz /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375398/SRR8375398_2_val_2.fq.gz /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375398/SRR8375398_sub_2_val_2.fq.gz"
+}
