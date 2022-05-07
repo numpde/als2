@@ -1,13 +1,13 @@
 {
 	"n_targets": 13,
 	"n_bootstraps": 0,
-	"n_processed": 55095722,
-	"n_pseudoaligned": 2921368,
-	"n_unique": 2921350,
+	"n_processed": 5506644,
+	"n_pseudoaligned": 291613,
+	"n_unique": 291611,
 	"p_pseudoaligned": 5.3,
 	"p_unique": 5.3,
 	"kallisto_version": "0.48.0",
 	"index_version": 10,
-	"start_time": "Thu Apr 21 19:58:42 2022",
-	"call": "/bio/tools/kallisto/src/build/src/kallisto quant --index=output/b/transcripts_cdna.fa.kallisto.idx --output-dir output/d_3_kallisto_map_sample/SRR8375402 --genomebam --gtf=/bio/ref/gtf/Homo_sapiens.GRCh38.105.gtf.gz --threads=7 /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375402/SRR8375402_1_val_1.fq.gz /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375402/SRR8375402_2_val_2.fq.gz"
+	"start_time": "Fri Apr 29 17:49:11 2022",
+	"call": "/bio/tools/kallisto/src/build/src/kallisto quant --index=output/b/transcripts_cdna.fa.kallisto.idx --output-dir output/d_3_kallisto_map_sample/SRR8375402 --genomebam --gtf=/bio/ref/gtf/Homo_sapiens.GRCh38.105.gtf.gz --threads=7 /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375402/SRR8375402_sub_1_val_1.fq.gz /bio/als/data/20220414-Tam-2019/samples_preprocessed/SRR8375402/SRR8375402_sub_2_val_2.fq.gz"
 }
